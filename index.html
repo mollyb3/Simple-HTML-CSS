@@ -10,7 +10,7 @@
 <body>
   <div class="page">
     <header>
-      <h1>Introduction to Web Development</h1>
+      <h1 id="topHeading">Introduction to Web Development</h1>
     </header>
 
     <main>
@@ -19,6 +19,7 @@
 
         <div class="about-row">
           <img
+            id="profilePic"
             class="profile-pic"
             src="me.jpg"
             alt="Portrait photo of Molly"
@@ -72,11 +73,58 @@
           </li>
         </ul>
       </section>
+
+      <!-- Button (single click triggers all animations) -->
+      <button id="startAnimation" class="animate-btn" type="button">
+        Start the Animation
+      </button>
     </main>
 
     <footer class="footer">
       <small>© 2026 Molly</small>
     </footer>
   </div>
+
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- jQuery animation script -->
+  <script>
+    $(function () {
+      const $heading = $("#topHeading");
+      const $pic = $("#profilePic");
+      const $btn = $("#startAnimation");
+
+      // Store originals so we can revert
+      const originalFontSize = $heading.css("font-size");
+      const originalColor = $heading.css("color");
+
+      $btn.on("click", function () {
+        // Optional: stop double-click spamming while it runs
+        $btn.prop("disabled", true);
+
+        // 1) Grow heading font size then go back
+        $heading
+          .stop(true, true)
+          .animate({ fontSize: "+=14px" }, 450)
+          .animate({ fontSize: originalFontSize }, 450);
+
+        // 2) Change heading color then go back (css + setTimeout)
+        $heading.css("color", "#b00020");
+        setTimeout(function () {
+          $heading.css("color", originalColor);
+        }, 900);
+
+        // 3) Add border around picture
+        $pic.css("border", "4px solid #222");
+
+        // Re-enable button after animation ends
+        setTimeout(function () {
+          $btn.prop("disabled", false);
+        }, 950);
+      });
+    });
+  </script>
 </body>
 </html>
+
