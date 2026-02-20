@@ -18,14 +18,21 @@
         <h2 id="about-heading" class="visually-hidden">About Me</h2>
 
         <div class="about-row">
-          <img
-            id="profilePic"
-            class="profile-pic"
-            src="me.jpg"
-            alt="Portrait photo of Molly"
-            width="180"
-            height="180"
-          >
+          <div class="media-col">
+            <img
+              id="profilePic"
+              class="profile-pic"
+              src="me.jpg"
+              alt="Portrait photo of Molly"
+              width="180"
+              height="180"
+            >
+
+            <!-- Button moved close to the image (better UX for watching animation) -->
+            <button id="startAnimation" class="animate-btn" type="button">
+              Start the Animation
+            </button>
+          </div>
 
           <p class="card">
             Hi! My name is Molly. I enjoy learning by building things, especially projects that mix creativity with
@@ -73,11 +80,6 @@
           </li>
         </ul>
       </section>
-
-      <!-- Button (single click triggers all animations) -->
-      <button id="startAnimation" class="animate-btn" type="button">
-        Start the Animation
-      </button>
     </main>
 
     <footer class="footer">
@@ -95,36 +97,44 @@
       const $pic = $("#profilePic");
       const $btn = $("#startAnimation");
 
-      // Store originals so we can revert
-      const originalFontSize = $heading.css("font-size");
+      // Store originals so we can revert cleanly
+      const originalFontSize = $heading.css("font-size"); // typically in px from the browser, that's fine
       const originalColor = $heading.css("color");
+      const originalBorderWidth = $pic.css("borderTopWidth");
+      const originalBorderColor = $pic.css("borderTopColor");
 
       $btn.on("click", function () {
-        // Optional: stop double-click spamming while it runs
+        // Prevent spam clicks mid-animation
         $btn.prop("disabled", true);
 
-        // 1) Grow heading font size then go back
-        $heading
-          .stop(true, true)
-          .animate({ fontSize: "+=14px" }, 450)
-          .animate({ fontSize: originalFontSize }, 450);
+        // Make sure we're starting from a clean slate
+        $heading.stop(true, true);
+        $pic.stop(true, true);
 
-        // 2) Change heading color then go back (css + setTimeout)
+        // 1) Heading: bump font-size up, then back (relative bump, not hard-coded px)
+        $heading
+          .animate({ fontSize: "120%" }, 500)
+          .animate({ fontSize: originalFontSize }, 500);
+
+        // 2) Heading: color change then revert (timed to match the first two steps)
         $heading.css("color", "#b00020");
         setTimeout(function () {
           $heading.css("color", originalColor);
-        }, 900);
+        }, 1000);
 
-        // 3) Add border around picture
-        $pic.css("border", "4px solid #222");
+        // 3) Picture: animate border width, then revert
+        // (Border color is changed instantly, then restored later)
+        $pic.css("border-color", "#222");
+        $pic
+          .animate({ borderTopWidth: "0.25rem" }, 250)
+          .animate({ borderTopWidth: originalBorderWidth }, 250);
 
-        // Re-enable button after animation ends
         setTimeout(function () {
+          $pic.css("border-color", originalBorderColor);
           $btn.prop("disabled", false);
-        }, 950);
+        }, 1100);
       });
     });
   </script>
 </body>
 </html>
-
